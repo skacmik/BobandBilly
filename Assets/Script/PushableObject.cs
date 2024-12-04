@@ -1,36 +1,30 @@
 using UnityEngine;
 
-public class PushableBlock : MonoBehaviour
+public class PushableObject : MonoBehaviour
 {
-    public float pushForce = 2.0f; // Síla pro tlaèení blokù hráèem `Player1`
     private Rigidbody2D rb;
 
-    private void Start()
+    void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void OnCollisionStay2D(Collision2D collision)
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Billy"))
+        if (collision.gameObject.CompareTag("PlayerSmall"))
         {
-            // Umožní tlaèení bloku hráèem `Player1`
-            Vector2 pushDirection = collision.contacts[0].normal * -1;
-            rb.AddForce(pushDirection * pushForce, ForceMode2D.Force);
+            rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
         }
-        else if (collision.gameObject.layer == LayerMask.NameToLayer("Bob"))
+        else if (collision.gameObject.CompareTag("PlayerBig"))
         {
-            // Zastaví jakýkoliv pohyb bloku pøi kontaktu s `Player2`
-            rb.velocity = Vector2.zero;       // Zruší pohyb bloku
-            rb.angularVelocity = 0f;          // Zruší rotaci bloku
-            rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+            rb.constraints = RigidbodyConstraints2D.None;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+    void OnCollisionExit2D(Collision2D collision)
     {
-        // Po opuštìní kolize s `Player2` uvolní pozici bloku, aby `Player1` mohl blok opìt tlaèit
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Bob"))
+        if (collision.gameObject.CompareTag("PlayerSmall"))
         {
             rb.constraints = RigidbodyConstraints2D.None;
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
