@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class MovePlatformButton : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class MovePlatformButton : MonoBehaviour
 
     private Vector3 initialPosition; // Poèáteèní pozice plošiny
     private Vector3 targetPosition; // Koneèná pozice plošiny
-    private bool isPlayerOnButton = false; // Sleduje, zda je hráè na tlaèítku
+    private int playersOnButton = 0; // Poèet hráèù na tlaèítku
     private Coroutine moveCoroutine; // Odkaz na aktuální pohybovou rutinu
 
     private void Start()
@@ -25,9 +26,11 @@ public class MovePlatformButton : MonoBehaviour
         // Pokud na tlaèítko vstoupí hráè
         if (collision.CompareTag("PlayerBig") || collision.CompareTag("PlayerSmall"))
         {
-            isPlayerOnButton = true;
-            if (moveCoroutine != null) StopCoroutine(moveCoroutine); // Zastav aktuální pohyb
-            moveCoroutine = StartCoroutine(MovePlatform(targetPosition)); // Plošina jede nahoru
+            playersOnButton++;
+            if (playersOnButton == 1) // Pokud je první hráè na tlaèítku, pohni plošinou
+            {
+                StartMoving(targetPosition);
+            }
         }
     }
 
@@ -36,17 +39,30 @@ public class MovePlatformButton : MonoBehaviour
         // Pokud hráè opustí tlaèítko
         if (collision.CompareTag("PlayerBig") || collision.CompareTag("PlayerSmall"))
         {
-            isPlayerOnButton = false;
-            if (moveCoroutine != null) StopCoroutine(moveCoroutine); // Zastav aktuální pohyb
-            moveCoroutine = StartCoroutine(MovePlatform(initialPosition)); // Plošina jede dolù
+            playersOnButton--;
+            if (playersOnButton == 0) // Plošina se pohybuje dolù, pouze když tlaèítko opustí poslední hráè
+            {
+                StartMoving(initialPosition);
+            }
         }
     }
 
-    private System.Collections.IEnumerator MovePlatform(Vector3 destination)
+    private void StartMoving(Vector3 destination)
     {
-        while (Vector3.Distance(platform.position, destination) > 0.01f)
+        if (moveCoroutine != null) StopCoroutine(moveCoroutine); // Zastaví pøedchozí pohyb
+        moveCoroutine = StartCoroutine(MovePlatformSmooth(destination));
+    }
+
+    private IEnumerator MovePlatformSmooth(Vector3 destination)
+    {
+        float elapsedTime = 0f;
+        Vector3 startPosition = platform.position;
+        float journeyTime = Vector3.Distance(startPosition, destination) / moveSpeed;
+
+        while (elapsedTime < journeyTime)
         {
-            platform.position = Vector3.MoveTowards(platform.position, destination, moveSpeed * Time.deltaTime);
+            elapsedTime += Time.deltaTime;
+            platform.position = Vector3.Lerp(startPosition, destination, elapsedTime / journeyTime);
             yield return null; // Poèkej na další snímek
         }
 
