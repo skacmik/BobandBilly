@@ -6,6 +6,8 @@ TagManager:
   tags:
   - PlayerBig
   - PlayerSmall
+  - Shield
+  - PushableObject
   layers:
   - Default
   - TransparentFX
@@ -17,8 +19,8 @@ TagManager:
   - PlayerBig
   - Pushable
   - Ground
-  - 
-  - 
+  - ShieldLayer
+  - BackGround
   - 
   - 
   - 
@@ -42,4 +44,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: BackGround
+    uniqueID: 1850186831
     locked: 0

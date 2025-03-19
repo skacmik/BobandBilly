@@ -24,7 +24,7 @@ public class KeyPickup : MonoBehaviour
         if (keyCollected && playerWithKey != null)
         {
            
-            transform.position = Vector3.Lerp(transform.position, playerWithKey.position + new Vector3(0, 1f, 0), followSpeed * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, playerWithKey.position + new Vector3(0, 3f, 0), followSpeed * Time.deltaTime);
         }
     }
 

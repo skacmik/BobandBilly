@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using TMPro;  // ✅ Přidání podpory pro TextMeshPro
+using TMPro;  // ✅ Podpora pro TextMeshPro
 using System.Collections;
 
 public class GameStats : MonoBehaviour
@@ -9,11 +9,25 @@ public class GameStats : MonoBehaviour
     public TMP_Text deathsText;
 
     private float playTime;
+    private bool isTrackingTime = true;
 
     private void Start()
     {
+        // ✅ Načte čas při startu
+        playTime = PlayerPrefs.GetFloat("TotalPlayTime", 0);
         UpdateStatsUI();
-        StartCoroutine(UpdatePlayTime());  // ✅ Spuštění časovače hry
+        StartCoroutine(UpdatePlayTime());  // ✅ Spuštění časovače
+    }
+
+    private IEnumerator UpdatePlayTime()
+    {
+        while (isTrackingTime)  // ✅ Ujistíme se, že čas běží i mezi scénami
+        {
+            playTime += Time.deltaTime;
+            PlayerPrefs.SetFloat("TotalPlayTime", playTime);
+            PlayerPrefs.Save();
+            yield return null;
+        }
     }
 
     public static void AddCompletedLevel()
@@ -23,15 +37,6 @@ public class GameStats : MonoBehaviour
         PlayerPrefs.SetInt("CompletedLevels", completedLevels);
         PlayerPrefs.Save();
         Debug.Log("🏆 Level dokončen! Celkový počet dokončených levelů: " + completedLevels);
-    }
-private IEnumerator UpdatePlayTime()
-    {
-        while (true)
-        {
-            playTime += Time.deltaTime;
-            PlayerPrefs.SetFloat("TotalPlayTime", playTime);
-            yield return null;
-        }
     }
 
     public void UpdateStatsUI()
@@ -50,5 +55,5 @@ private IEnumerator UpdatePlayTime()
         int minutes = Mathf.FloorToInt(time / 60);
         int seconds = Mathf.FloorToInt(time % 60);
         return minutes + "m " + seconds + "s";
-    } // ✅ Tato závorka tu nesměla chybět!
-} // ✅ Hlavní závorka třídy
+    }
+}

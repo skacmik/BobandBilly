@@ -10,7 +10,7 @@ public class SelectLevel : MonoBehaviour
         PlayerPrefs.Save();
 
         // ✅ Pohne postavičkami ke zvolenému levelu
-        FindObjectOfType<CharacterMovement>().MoveCharacters(levelIndex);
+        FindObjectOfType<CharacterMovement>().SelectLevel(levelIndex);
 
         // ✅ Načte scénu s daným levelem
         string levelName = "Level" + levelIndex;

@@ -2,42 +2,62 @@ using UnityEngine;
 
 public class PushableObject : MonoBehaviour
 {
+    public float pushForce = 10f; // Síla, kterou velký hráè tlaèí objekt
     private Rigidbody2D rb;
+    private bool isBeingPushed = false;
+    private Transform smallPlayerOnTop = null;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation; // Zabrání rotaci
+        rb.drag = 5f; // Vìtší odpor pro eliminaci dokluzování
+    }
+
+    private void Update()
+    {
+        // Pokud je malý hráè nahoøe, nastavíme ho jako dítì pushovatelného objektu
+        if (smallPlayerOnTop != null)
+        {
+            smallPlayerOnTop.position += (Vector3)rb.velocity * Time.deltaTime;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isBeingPushed)
+        {
+            rb.velocity = new Vector2(0, rb.velocity.y); // Okamžité zastavení pøi uvolnìní
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // Pokud se dotkne velký hráè, odemkne pohyb objektu
         if (collision.gameObject.CompareTag("PlayerBig"))
         {
-            rb.constraints = RigidbodyConstraints2D.None;
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            isBeingPushed = true;
         }
 
-        // Pokud na objekt vstoupí malý hráè, zajisti pohyb spolu s objektem
         if (collision.gameObject.CompareTag("PlayerSmall"))
         {
-            collision.transform.SetParent(transform);
+            // Kontrola, zda malý hráè stojí NA objektu, ne vedle
+            if (collision.contacts[0].normal.y < -0.5f)
+            {
+                smallPlayerOnTop = collision.transform;
+            }
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        // Jakmile velký hráè pøestane tlaèit, okamžitì zastaví objekt
         if (collision.gameObject.CompareTag("PlayerBig"))
         {
-            rb.constraints = RigidbodyConstraints2D.FreezeAll;
-            rb.velocity = Vector2.zero; // Zastaví pohyb objektu
+            isBeingPushed = false;
         }
 
-        // Pokud malý hráè opustí objekt, odstraò ho z rodièovství
-        if (collision.gameObject.CompareTag("PlayerSmall"))
+        if (collision.gameObject.CompareTag("PlayerSmall") && smallPlayerOnTop == collision.transform)
         {
-            collision.transform.SetParent(null);
+            smallPlayerOnTop = null;
         }
     }
 }

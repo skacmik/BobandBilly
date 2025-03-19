@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3631807493148966069}
   - component: {fileID: 2301506175949677823}
-  - component: {fileID: -4431075605923397404}
   - component: {fileID: 4555373597300269615}
+  - component: {fileID: 3597488686456461653}
   m_Layer: 0
   m_Name: DestroyButton
   m_TagString: Untagged
@@ -86,19 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &-4431075605923397404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 777604712334362490}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 752f1c46e6ed0fe4e9a8920c21b060f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  objectToDestroy: {fileID: 0}
 --- !u!61 &4555373597300269615
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -144,3 +131,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.44103622, y: 0.35911587}
   m_EdgeRadius: 0
+--- !u!114 &3597488686456461653
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 777604712334362490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: debe18e9834d8514996a284e216ce8c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectToDestroy: {fileID: 0}

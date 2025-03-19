@@ -1,15 +1,35 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DestroyButton : MonoBehaviour
 {
-    public GameObject objectToDestroy; // Objekt, kter� m� b�t zni�en
+    public GameObject objectToDestroy; // Objekt, který má být zničen
+    private int objectsOnButton = 0; // Počítá objekty na tlačítku
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Kontrola, zda hr�� interaguje s tla��tkem
-        if(collision.CompareTag("PlayerBig") || collision.CompareTag("PlayerSmall"))
+        // Pokud na tlačítko vstoupí velký hráč, malý hráč nebo pushable objekt
+        if (collision.CompareTag("PlayerBig") || collision.CompareTag("PlayerSmall") || collision.CompareTag("PushableObject"))
         {
-            DestroyObject(); // Zavol� metodu na zni�en� objektu
+            objectsOnButton++;
+
+            if (objectsOnButton == 1) // Pokud je to první objekt na tlačítku, odstraníme překážku
+            {
+                DestroyObject();
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        // Když objekt opustí tlačítko
+        if (collision.CompareTag("PlayerBig") || collision.CompareTag("PlayerSmall") || collision.CompareTag("PushableObject"))
+        {
+            objectsOnButton--;
+
+            if (objectsOnButton == 0) // Pokud tlačítko není zatížené, překážka se vrátí
+            {
+                RestoreObject();
+            }
         }
     }
 
@@ -17,11 +37,19 @@ public class DestroyButton : MonoBehaviour
     {
         if (objectToDestroy != null)
         {
-            Destroy(objectToDestroy); // Zni�� objekt
+            objectToDestroy.SetActive(false); // Objekt "zmizí", ale není zničen
         }
         else
         {
-            Debug.LogWarning("��dn� objekt nen� p�i�azen k odstran�n�!");
+            Debug.LogWarning("⚠️ Žádný objekt není přiřazen k odstranění!");
+        }
+    }
+
+    private void RestoreObject()
+    {
+        if (objectToDestroy != null)
+        {
+            objectToDestroy.SetActive(true); // Překážka se vrátí zpět
         }
     }
 }
